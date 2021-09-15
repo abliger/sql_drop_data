@@ -1,0 +1,10 @@
+cargo-features = ["edition2021"]
+[package]
+name = "sql_drop_data"
+version = "0.1.0"
+edition = "2021"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+oracle = { version = "0.5.3", features = ["chrono"] }
+clap = "3.0.0-beta.4"
