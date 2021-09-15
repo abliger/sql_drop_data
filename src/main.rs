@@ -27,8 +27,8 @@ struct Opts {
 fn main() {
     let Opts { username, password, database, modify } = Opts::parse();
 
-    let conn = Connection::connect(username, password, database).unwrap();
-    conn.autocommit();
+    let mut conn = Connection::connect(username, password, database).unwrap();
+    conn.set_autocommit(true);
     let sql = "select table_name from user_tables";
     let rows = conn.query(sql, &[]).unwrap();
 
@@ -53,7 +53,6 @@ fn main() {
                 panic!("解析失败");
             };
         }
-        conn.commit();
     }
     conn.close();
 }
