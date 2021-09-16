@@ -17,8 +17,11 @@ pub struct Opts {
     #[clap(short = 'm', long)]
     pub modify: Vec<String>,
     /// 是否需要删除
-    #[clap(short = 't', long="type")]
+    #[clap(short = 't', long="type",required = false)]
     pub type_app: String,
+    /// 数据表名
+    #[clap(long="table",required = false)]
+    pub table_name: String,
 }
 
 impl Opts {

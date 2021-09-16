@@ -1,6 +1,4 @@
 use oracle::{Connection, ResultSet, Row, SqlValue};
-use std::fs::File;
-use std::io::{BufReader, BufRead};
 
 /// 获得所有的表
 fn get_all_tables(conn: &Connection) ->oracle::Result<ResultSet<Row>> {
@@ -41,6 +39,12 @@ pub fn clear_data(conn: &Connection) ->oracle::Result<()>{
     };
     exec_by_all_tables(rows,clear)
 }
+/// 获取指定表结构
+pub fn desc_table(conn: &Connection,table_name: &str) ->oracle::Result<()>{
+    conn.execute(format!("desc {}", table_name).as_str(), &[])?;
+    Ok(())
+}
+
 /// 执行sql文件
 pub fn exec_modify(modify: Vec<String>, conn: &Connection)->oracle::Result<()> {
     for x in modify {
