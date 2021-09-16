@@ -44,18 +44,8 @@ pub fn clear_data(conn: &Connection) ->oracle::Result<()>{
 /// 执行sql文件
 pub fn exec_modify(modify: Vec<String>, conn: &Connection)->oracle::Result<()> {
     for x in modify {
-        let input = File::open(&x).expect("文件不存在");
-        let buffered = BufReader::new(input);
-        for line in buffered.lines() {
-            if let Ok(string) = line {
-                if string.len() > 0 {
-                    println!("{}", &string[0..string.len()]);
-                    conn.execute(&string[0..string.len() - 1], &[])?;
-                }
-            } else {
-                panic!("解析失败");
-            };
-        }
+        let content = std::fs::read_to_string(x).expect("文件不存在");
+        conn.batch(&content, std::u32::MAX as usize).build().unwrap().execute()?;
     }
     Ok(())
 }
