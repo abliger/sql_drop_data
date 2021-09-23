@@ -1,10 +1,9 @@
 use oracle::{Connection, ResultSet, Row, SqlValue};
 
+use interface::Exec;
 
 #[path = "../interface.rs"]
 pub mod interface;
-
-use interface::Exec;
 
 pub struct OracleConn {}
 
@@ -50,7 +49,7 @@ impl Exec for OracleConn {
     }
     /// 获取指定表结构
     fn desc_table(&self, conn: &Connection, table_name: &str) -> oracle::Result<()> {
-        conn.execute(format!("desc {}", table_name).as_str(), &[])?;
+        conn.execute(format!("desc {}", table_name).as_str(), &[]).unwrap();
         Ok(())
     }
 
@@ -58,7 +57,9 @@ impl Exec for OracleConn {
     fn exec_modify(&self, modify: Vec<String>, conn: &Connection) -> oracle::Result<()> {
         for x in modify {
             let content = std::fs::read_to_string(x).expect("文件不存在");
+            println!("{}", content);
             conn.batch(&content, std::u32::MAX as usize).build().unwrap().execute()?;
+            conn.commit()?;
         }
         Ok(())
     }
