@@ -1,14 +1,11 @@
 use oracle::{Connection, ResultSet, Row, SqlValue};
 
-use interface::Exec;
-
 #[path = "../interface.rs"]
 pub mod interface;
 
 pub struct OracleConn {}
 
-
-impl Exec for OracleConn {
+impl interface::Exec for OracleConn {
     /// 获得链接
     fn get_connect(&self, username: String, password: String, database: String) -> Connection {
         let mut conn = Connection::connect(username, password, database).unwrap();
@@ -55,12 +52,27 @@ impl Exec for OracleConn {
 
     /// 执行sql文件
     fn exec_modify(&self, modify: Vec<String>, conn: &Connection) -> oracle::Result<()> {
+        let mut sqls = vec![];
+        let mut str = String::new();
         for x in modify {
+            let str = &mut str;
             let content = std::fs::read_to_string(x).expect("文件不存在");
-            println!("{}", content);
-            conn.batch(&content, std::u32::MAX as usize).build().unwrap().execute()?;
-            conn.commit()?;
+            for x in content.lines() {
+                let x1: Vec<&str> = x.trim_end().split(';').collect();
+                if x1.len() > 1 {
+                    str.push_str(&x1[0]);
+                    sqls.push(str.clone());
+                    str.clear();
+                    str.push_str(&x1[1]);
+                } else {
+                    str.push_str(&x1[0]);
+                }
+            }
         }
-        Ok(())
+        for x in sqls {
+            println!("{}", x);
+            conn.execute(x.as_str(), &[])?;
+        }
+        conn.commit()
     }
 }
