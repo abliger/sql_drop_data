@@ -7,7 +7,7 @@ use params::Opts;
 use sql_drop_data::oracle_conn::OracleConn;
 use sql_drop_data::oracle_conn::interface::Exec;
 
-fn main(){
+fn main() -> oracle::Result<()>{
     let Opts { username, password, database, modify, type_app, table_name } = Opts::parse_app();
     let ora = OracleConn {};
     let conn = ora.get_connect(username, password, database);
@@ -20,6 +20,7 @@ fn main(){
     if modify.len() > 0 {
         ora.exec_modify(modify, &conn).unwrap();
     }
+    conn.commit()
 }
 
 

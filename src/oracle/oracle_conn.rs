@@ -8,8 +8,7 @@ pub struct OracleConn {}
 impl interface::Exec for OracleConn {
     /// 获得链接
     fn get_connect(&self, username: String, password: String, database: String) -> Connection {
-        let mut conn = Connection::connect(username, password, database).unwrap();
-        conn.set_autocommit(true);
+        let conn = Connection::connect(username, password, database).unwrap();
         conn
     }
     /// 遍历所有的表，并执行func函数
@@ -73,6 +72,6 @@ impl interface::Exec for OracleConn {
             println!("{}", x);
             conn.execute(x.as_str(), &[])?;
         }
-        conn.commit()
+        Ok(())
     }
 }
